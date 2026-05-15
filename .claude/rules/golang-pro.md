@@ -8,6 +8,15 @@ Go 后端所有代码必须遵循以下规则。
 - 协程 (goroutine) 必须有明确生命周期管理，禁止创建无 lifecycle 的裸 goroutine
 - 使用 `errgroup` 或 `sync.WaitGroup` 管理并发任务
 
+### Context 传播规则
+
+- **Handler 层**：从 `c.Request.Context()` 获取请求上下文，传递给 Service 层
+- **Service 层**：接收 `ctx context.Context` 作为第一个参数，传递给 Repository 层和外部调用
+- **Repository 层**：接收 `ctx context.Context` 作为第一个参数，使用 `r.db.WithContext(ctx)` 执行数据库查询
+- **中间件层**：使用 `c.Request.Context()` 而非 `context.Background()`，保证请求上下文在整个链路中传播
+- 禁止在 Service/Repository/Handler 中使用 `context.Background()` 或 `context.TODO()`（仅允许在 `init()` 或测试中使用）
+- 传递上下文时，仅使用 `ctx` 变量名，禁止 `context` 等歧义命名
+
 ## 错误处理
 
 - 所有错误必须显式处理，禁止 `_` 忽略
