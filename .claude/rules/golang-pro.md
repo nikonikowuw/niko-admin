@@ -11,9 +11,21 @@ Go 后端所有代码必须遵循以下规则。
 ## 错误处理
 
 - 所有错误必须显式处理，禁止 `_` 忽略
-- 禁止用 `panic` 做常规错误处理
 - 错误传播使用 `fmt.Errorf("%w", err)` 包装，保持完整错误链
 - 业务错误统一使用 `internal/pkg/errors` 定义错误码
+
+## 全局异常处理
+
+- 所有中间件和 Handler 中的错误统一使用 `c.Error(err)` 挂载到 Gin Context，由全局 Error 中间件统一捕获并格式化响应
+- 业务代码禁止直接 `c.AbortWithStatusJSON()` 拼装响应，必须通过 `internal/pkg/response` 和 `internal/pkg/errors` 返回
+- Error 中间件规则：
+  - 作为 Gin 链的**最后一个**中间件注册（在所有路由之后）
+  - 遍历 `c.Errors` 取出每条错误，按错误码映射 HTTP 状态码
+  - 错误码格式：`{ "code": <业务错误码>, "message": "<多语言消息>", "error": { ... } }`
+  - HTTP 状态码按错误码区间映射：`1xxxx→400`, `2xxxx→401`, `3xxxx→403`, `4xxxx→404`, `5xxxx→500`
+- 自定义中间件（auth/rbac/cors/限流）验出错误时使用 `c.Abort()` + `c.Error(err)` 终止链，不得直接写入响应
+- 业务代码禁止用 `panic`，仅允许在 `init()` 或不可恢复的致命场景使用
+- 单独的 Recovery 中间件（gin.Recovery 或自定义）作为链**最前**兜底 panic，返回统一错误码 50000
 
 ## 代码规范
 
