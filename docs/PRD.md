@@ -33,22 +33,26 @@
 ### 2.2 User Stories
 
 #### Story 1: 项目初始化
+
 - **As a** 后端开发者
 - **I want to** 通过命令快速创建一个新后台项目
 - **So that** 我不需要从零搭建项目结构
 
 **Acceptance Criteria**:
+
 - 提供 CLI 命令或脚本完成项目初始化
 - 初始化后项目可直接 `go run` 启动
 - 默认包含完整的项目目录结构
 - 提供 `docker-compose.yml` 一键启动依赖服务（PostgreSQL + Redis）
 
 #### Story 2: 用户认证
+
 - **As a** 系统管理员
 - **I want to** 使用用户名/密码登录系统
 - **So that** 我可以安全地访问后台管理功能
 
 **Acceptance Criteria**:
+
 - 支持用户名 + 密码登录
 - 登录成功后返回 access_token（2h）和 refresh_token（7d），双 Token 机制
 - Access Token：
@@ -66,11 +70,13 @@
 - 支持 `POST /auth/refresh` 无感刷新，React Admin 的 authProvider 自动拦截 401 调用此接口
 
 #### Story 3: RBAC 权限管理
+
 - **As a** 系统管理员
 - **I want to** 创建角色并为角色分配菜单/API 权限
 - **So that** 不同用户只能访问授权范围内的功能
 
 **Acceptance Criteria**:
+
 - 支持用户管理（创建、编辑、禁用、删除）
 - 支持角色管理（创建、编辑、删除）
 - 支持资源/权限点管理（API 路径 + HTTP 方法）
@@ -81,11 +87,13 @@
 - Redis 缓存角色权限，设置 5 分钟 TTL
 
 #### Story 4: CRUD 代码生成
+
 - **As a** 后端开发者
 - **I want to** 通过定义 Model 结构体自动生成 CRUD API
 - **So that** 减少重复 boilerplate 代码编写
 
 **Acceptance Criteria**:
+
 - 根据 GORM Model 定义生成标准 CRUD 接口（Create/Read/Update/Delete/List）
 - 生成代码包含：Handler、Service、Repository、Router、DTO（请求/响应结构体）
 - 生成的 Handler 中自动包含 Swagger 注解（`@Summary`、`@Param`、`@Success`、`@Router`）
@@ -96,11 +104,13 @@
 - 支持 `-f` 参数指定单个 Model 文件生成，或 `--all` 批量生成所有 Model
 
 #### Story 5: 审计日志
+
 - **As a** 系统管理员
 - **I want to** 查看所有用户的操作记录
 - **So that** 我可以追踪安全事件和责任归属
 
 **Acceptance Criteria**:
+
 - 自动记录所有对数据库的写操作（Create/Update/Delete）
 - 记录内容包括：操作用户、操作时间、操作类型、请求 IP、请求路径、请求参数、影响数据
 - 审计日志不可删除（软删除或归档）
@@ -108,11 +118,13 @@
 - 审计日志写入使用异步队列，不阻塞主流程
 
 #### Story 6: 文件管理
+
 - **As a** 系统管理员
 - **I want to** 上传和管理文件
 - **So that** 我可以在系统中使用这些文件资源
 
 **Acceptance Criteria**:
+
 - 支持文件上传（图片、文档、压缩包等常见格式）
 - 支持文件类型白名单配置
 - 支持单文件大小限制配置（默认 10MB，可调整为 GB 级）
@@ -131,11 +143,13 @@
 - 支持文件删除（软删除）
 
 #### Story 7: 国际化和 WebSocket 实时通知
+
 - **As a** 使用者
 - **I want to** 看到实时通知和使用我习惯的语言界面
 - **So that** 协作效率更高
 
 **Acceptance Criteria**:
+
 - 后端 API 支持 i18n 错误消息多语言（至少中/英）
 - API 返回的错误消息可根据请求 Header `Accept-Language` 切换语言
 - WebSocket 基于 `gorilla/websocket` 实现
@@ -144,11 +158,13 @@
 - WebSocket 连接使用 JWT 鉴权
 
 #### Story 8: 异步任务队列
+
 - **As a** 系统管理员
 - **I want to** 执行异步任务（如批量导入、发送邮件、数据导出）
 - **So that** 耗时操作不阻塞用户操作
 
 **Acceptance Criteria**:
+
 - 基于 Asynq 实现任务队列
 - 提供任务创建、查询、重试、取消功能
 - 任务状态追踪（pending/running/completed/failed）
@@ -156,11 +172,13 @@
 - 提供 Asynq Monitor Web UI 路由
 
 #### Story 9: 开发热重载
+
 - **As a** 后端开发者
 - **I want to** 修改代码后服务自动重启
 - **So that** 我不需要手动停止和重新启动服务
 
 **Acceptance Criteria**:
+
 - 集成 `air` 热重载工具，监听 `.go` 和模板文件变更
 - 提供 `.air.toml` 配置文件，预设常用构建和监听规则
 - `make dev` 或 `air` 命令一键启动热重载模式
@@ -169,6 +187,7 @@
 - 支持监听自定义目录（如 `internal/`, `cmd/`, `pkg/`）
 
 ### 2.3 Non-Goals
+
 - 不做 SSO/SSO 单点登录集成（留给使用者按需扩展）
 - 不做前端页面开发（前端完全由 React Admin 提供）
 - 不做自动化部署 Pipeline（只提供 Dockerfile 和 docker-compose）
@@ -660,6 +679,7 @@ Client                              Server
 GET /files/upload/:upload_id/progress
 → { "total": 20, "uploaded": [0,1,2,5], "missing": [3,4,6..19] }
 ```
+
 前端根据 `missing` 列表仅重传未完成的分片。
 
 **秒传检测**：
@@ -669,6 +689,7 @@ POST /files/upload/check
 { "md5": "d41d8cd98f00b204e9800998ecf8427e" }
 → { "exists": true, "file": { "id": "...", "url": "..." } }
 ```
+
 MD5 匹配则直接返回已有文件 URL，跳过上传。
 
 #### 3.6.3 多线程下载
@@ -695,6 +716,7 @@ Content-Type: application/octet-stream
 | 后端并发读 | 无限流 | goroutine 天然适合并发读，无需额外限制 |
 
 **实现要点**：
+
 - 后端 `Storage` 接口增加 `SeekReader` 方法：`ReadAt(p []byte, off int64) (n int, err error)`
 - 三种后端均支持 Range：
   - `local`: `os.File.ReadAt`
@@ -846,6 +868,7 @@ type User struct {
 ```
 
 **解析规则**：
+
 | Model 特征 | 代码生成行为 |
 |------------|-------------|
 | 字段名 `ID` | 自动识别为主键，生成 `GetByID` 查询 |
@@ -861,6 +884,7 @@ type User struct {
 使用 Go 标准库 `text/template`，每个生成目标一个模板文件：
 
 **模板变量注入**：
+
 ```
 {{.ModelName}}       // User
 {{.ModelPlural}}     // users
@@ -1049,7 +1073,7 @@ help:
 	@echo ""
 	@echo "Available targets:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
-		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
+  awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 ```
 
 #### 3.11.4 构建产物
@@ -1201,6 +1225,7 @@ NIKO_STORAGE_DRIVER=local
 ### 4.1 Phased Rollout Plan
 
 #### Phase 1: MVP (Week 1-2)
+
 - [ ] 项目骨架搭建（目录结构、配置加载、启动流程）
 - [ ] air 热重载集成（`.air.toml` 配置）
 - [ ] Makefile 构建系统（`dev/build/test/lint/swag/gen/clean/help`）
@@ -1212,6 +1237,7 @@ NIKO_STORAGE_DRIVER=local
 - [ ] docker-compose 一键启动
 
 #### Phase 2: Core Features (Week 3-4)
+
 - [ ] RBAC 权限管理（用户/角色/权限 CRUD）
 - [ ] 权限中间件 + 动态权限加载
 - [ ] 审计日志系统
@@ -1222,6 +1248,7 @@ NIKO_STORAGE_DRIVER=local
 - [ ] 前端 React Admin 对接
 
 #### Phase 3: Polish & Productivity (Week 5-6)
+
 - [ ] Swagger 全局注解 + 所有 Handler 补全 Swagger 注解
 - [ ] Swagger UI 权限控制（仅 dev/staging 环境暴露）
 - [ ] CRUD 代码生成器（Parser + Renderer + Template）
@@ -1268,11 +1295,11 @@ React Admin 前端为一个独立的 npm 项目，放在 `web/` 目录下。后�
 
 ### 5.2 References
 
-- React Admin Documentation: https://marmelab.com/react-admin/
-- Gin Web Framework: https://gin-gonic.com/
-- GORM: https://gorm.io/
-- Asynq: https://github.com/hibiken/asynq
-- gorilla/websocket: https://github.com/gorilla/websocket
-- swaggo/swag: https://github.com/swaggo/swag
-- gin-swagger: https://github.com/swaggo/gin-swagger
-- Go text/template: https://pkg.go.dev/text/template
+- React Admin Documentation: <https://marmelab.com/react-admin/>
+- Gin Web Framework: <https://gin-gonic.com/>
+- GORM: <https://gorm.io/>
+- Asynq: <https://github.com/hibiken/asynq>
+- gorilla/websocket: <https://github.com/gorilla/websocket>
+- swaggo/swag: <https://github.com/swaggo/swag>
+- gin-swagger: <https://github.com/swaggo/gin-swagger>
+- Go text/template: <https://pkg.go.dev/text/template>
